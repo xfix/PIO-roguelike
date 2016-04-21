@@ -3,6 +3,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
+import java.util.Collection;
+import java.util.Collections;
+
 public class ASCIIMap {
     Mesh mesh;
     Texture texture;
@@ -33,11 +36,18 @@ public class ASCIIMap {
             }
         }
 
-        // FIXME: Jako że rysuje od dołu a czyta od góry kolejność lini jest odwrócona.
+        // Odwracamy mapę aby ją oprawnie narysować
+        String lines[] = map.split("\n");
+        map = "";
+        for (int i = lines.length - 1; i > 0; i--) {
+            map += lines[i] + "\n";
+        }
+
         // [map_h * map_w * 5 * 6] - wymiary mapy * wielkość wierzchołak * ilość wierzchołków
         float[] vert = new  float[map_h * map_w * 5 * 6];
         int i = 0, w_pos = 0, h_pos = 0;
-        for (; map_i < map.length(); ++map_i) {
+
+        for (map_i = 0; map_i < map.length(); ++map_i) {
             char c = map.charAt(map_i);
             // Jak ktoś zamieni Unixowe zakończenie plików na Windowsowe…
             if (c == '\n') {
@@ -45,7 +55,7 @@ public class ASCIIMap {
                 h_pos++;
                 continue;
             }
-            CharMetric met = tex_info.get(c); // Jeśli to jest poprawna składnia, to nie wiem kto ten język projektował…
+            CharMetric met = tex_info.get(c);
             float x = w_pos * width + met.offset_x;
             float y = h_pos * height + met.height + met.offset_y;
 
