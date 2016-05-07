@@ -31,7 +31,7 @@ public class ASCIITextureInfo {
                 temp.height = input.nextInt();
                 temp.offset_x = input.nextInt();
                 temp.offset_y = input.nextInt();
-                char_metrics.put((char)znak, temp);
+                char_metrics.put(znak, temp);
                // System.out.println("znak= "+ (char)znak+" x= " + temp.pos_x + " y= " + temp.pos_y + " szer = " + temp.width + " heg= " + temp.height + " offsetx= " + temp.offset_x + " offsety= " + temp.offset_y + " char_wid= " + input.nextInt() );
                 input.nextLine();
             }
@@ -44,7 +44,7 @@ public class ASCIITextureInfo {
     }
 
     public CharMetric get(char c) {
-        return (CharMetric)char_metrics.get(c);
+        return char_metrics.get(c);
     }
 
     public int char_width() {
@@ -60,5 +60,5 @@ public class ASCIITextureInfo {
     /// Max character height
     int char_height;
 
-    Map char_metrics;
+    Map<Character, CharMetric> char_metrics;
 }
