@@ -10,7 +10,7 @@ public class ASCIITextureInfo {
         char_width = 19;
         char_height = 38;
         char_metrics = new HashMap<Character, CharMetric>();
-        float znak;
+        char znak;
         try {
             FileReader file = new FileReader("ascii/fira_mono_medium_24.sfl");
             //CharMetric temp = new CharMetric();
@@ -24,7 +24,7 @@ public class ASCIITextureInfo {
             while(input.hasNextLine())
             {
                 CharMetric temp = new CharMetric();
-                znak=input.nextInt();
+                znak = (char) input.nextInt();
                 temp.pos_x = input.nextInt();
                 temp.pos_y = input.nextInt();
                 temp.width = input.nextInt();
