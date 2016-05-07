@@ -13,6 +13,16 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class Game extends ApplicationAdapter {
+    private class KeyActionMapping {
+        int key;
+        InputAction action;
+
+        KeyActionMapping(int key, InputAction action) {
+            this.key = key;
+            this.action = action;
+        }
+    };
+
     ASCIIMap map;
     OrthographicCamera camera;
     long prev_time, lag;
@@ -22,6 +32,25 @@ public class Game extends ApplicationAdapter {
 
     // Możemy powiadomić rożne obiekty, ale tylko jeden w danym czasie
     InputObserver observer;
+
+    KeyActionMapping[] keyActions = {
+        new KeyActionMapping(Input.Keys.W, InputAction.MOVE_UP),
+        new KeyActionMapping(Input.Keys.S, InputAction.MOVE_DOWN),
+        new KeyActionMapping(Input.Keys.A, InputAction.MOVE_LEFT),
+        new KeyActionMapping(Input.Keys.D, InputAction.MOVE_RIGHT),
+
+        new KeyActionMapping(Input.Keys.K, InputAction.MOVE_UP),
+        new KeyActionMapping(Input.Keys.J, InputAction.MOVE_DOWN),
+        new KeyActionMapping(Input.Keys.L, InputAction.MOVE_LEFT),
+        new KeyActionMapping(Input.Keys.H, InputAction.MOVE_RIGHT),
+
+        new KeyActionMapping(Input.Keys.DPAD_UP, InputAction.MOVE_UP),
+        new KeyActionMapping(Input.Keys.DPAD_DOWN, InputAction.MOVE_DOWN),
+        new KeyActionMapping(Input.Keys.DPAD_LEFT, InputAction.MOVE_LEFT),
+        new KeyActionMapping(Input.Keys.DPAD_RIGHT, InputAction.MOVE_RIGHT),
+
+        new KeyActionMapping(Input.Keys.F, InputAction.INTERACT),
+    };
 
     @Override
     public void create() {
@@ -63,20 +92,10 @@ public class Game extends ApplicationAdapter {
     }
 
     void update() {
-        if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.K)) {
-            observer.execute(InputAction.MOVE_UP);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.J)) {
-            observer.execute(InputAction.MOVE_DOWN);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.D) || Gdx.input.isKeyPressed(Input.Keys.L)) {
-            observer.execute(InputAction.MOVE_RIGHT);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.A) || Gdx.input.isKeyPressed(Input.Keys.H)) {
-            observer.execute(InputAction.MOVE_LEFT);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.F)) {
-            observer.execute(InputAction.INTERACT);
+        for (KeyActionMapping mapping : keyActions) {
+            if (Gdx.input.isKeyPressed(mapping.key)) {
+                observer.execute(mapping.action);
+            }
         }
     }
 }
