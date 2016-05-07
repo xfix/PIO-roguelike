@@ -9,10 +9,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pio.roguelike.map.ASCIIMap;
 import com.pio.roguelike.playground.NotAnActor;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class Game extends ApplicationAdapter {
-	ASCIIMap map;
+    ASCIIMap map;
     OrthographicCamera camera;
     long prev_time, lag;
     final long UPDATE_TIME_NS = 16666666;
@@ -24,7 +25,13 @@ public class Game extends ApplicationAdapter {
 
     @Override
     public void create() {
-        map = new ASCIIMap("test");
+        try {
+            map = new ASCIIMap("test");
+        }
+        catch (FileNotFoundException e) {
+            System.err.println("Cannot load 'test' map");
+            System.exit(1);
+        }
         camera = new OrthographicCamera(800, 600);
 
         batch = new SpriteBatch();

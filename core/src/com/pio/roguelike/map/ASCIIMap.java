@@ -3,6 +3,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
+import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -11,7 +12,7 @@ public class ASCIIMap {
     Texture texture;
     ShaderProgram shader;
 
-    public ASCIIMap(String name) {
+    public ASCIIMap(String name) throws FileNotFoundException {
         shader = new ShaderProgram(Gdx.files.internal("shaders/map.v.glsl"), Gdx.files.internal("shaders/map.f.glsl"));
         texture = new Texture(Gdx.files.internal("ascii/fira_mono_medium_24.png"));
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
