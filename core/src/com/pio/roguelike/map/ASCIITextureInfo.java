@@ -21,10 +21,13 @@ public class ASCIITextureInfo {
         int n = input.nextInt();
         input.nextLine();
         System.out.println(n);
-        while(input.hasNextLine())
+        while (true)
         {
-            CharMetric temp = new CharMetric();
             znak=input.nextInt();
+            if (znak == 0) {
+                break;
+            }
+            CharMetric temp = new CharMetric();
             temp.pos_x = input.nextInt();
             temp.pos_y = input.nextInt();
             temp.width = input.nextInt();
