@@ -5,9 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.pio.roguelike.InputAction;
-import com.pio.roguelike.InputObserver;
+import com.pio.roguelike.InputListener;
 
-public class NotAnActor extends Sprite implements InputObserver {
+public class NotAnActor extends Sprite implements InputListener {
 
     public NotAnActor() {
         Texture texture = new Texture(Gdx.files.internal("ascii/fira_mono_medium_24.png"));

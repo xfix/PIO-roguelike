@@ -9,8 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pio.roguelike.map.ASCIIMap;
 import com.pio.roguelike.playground.NotAnActor;
 
-import java.util.ArrayList;
-
 public class Game extends ApplicationAdapter {
     private class KeyActionMapping {
         int key;
@@ -30,7 +28,7 @@ public class Game extends ApplicationAdapter {
     SpriteBatch batch;
 
     // Możemy powiadomić rożne obiekty, ale tylko jeden w danym czasie
-    InputObserver observer;
+    InputListener listener;
 
     KeyActionMapping[] keyActions = {
         new KeyActionMapping(Input.Keys.W, InputAction.MOVE_UP),
@@ -58,7 +56,7 @@ public class Game extends ApplicationAdapter {
 
         batch = new SpriteBatch();
         actor = new NotAnActor();
-        observer = actor;
+        listener = actor;
 
         prev_time = System.nanoTime();
         lag = 0;
@@ -87,7 +85,7 @@ public class Game extends ApplicationAdapter {
     void update() {
         for (KeyActionMapping mapping : keyActions) {
             if (Gdx.input.isKeyPressed(mapping.key)) {
-                observer.execute(mapping.action);
+                listener.execute(mapping.action);
             }
         }
     }
