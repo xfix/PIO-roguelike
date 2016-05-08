@@ -58,7 +58,7 @@ public class Game extends ApplicationAdapter {
         camera = new OrthographicCamera(800, 600);
 
         batch = new SpriteBatch();
-        actor = new NotAnActor();
+        actor = new NotAnActor(map);
         listener = actor;
 
         prev_time = System.nanoTime();
@@ -77,11 +77,16 @@ public class Game extends ApplicationAdapter {
             lag -= UPDATE_TIME_NS;
         }
 
+        float progress = (float)lag / (float)UPDATE_TIME_NS;
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         map.render(camera);
         batch.begin();
+
+        actor.translate(actor.velocity_x() * progress, actor.velocity_y() * progress);
         actor.draw(batch);
+        actor.translate(-actor.velocity_x() * progress, -actor.velocity_y() * progress);
+
         batch.end();
     }
 
@@ -91,5 +96,7 @@ public class Game extends ApplicationAdapter {
                 listener.execute(mapping.action);
             }
         }
+
+        actor.update();
     }
 }

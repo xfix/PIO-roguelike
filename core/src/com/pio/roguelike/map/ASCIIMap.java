@@ -5,11 +5,16 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.IntStream;
 
 public class ASCIIMap {
     Mesh mesh;
     Texture texture;
     ShaderProgram shader;
+    byte[] logic_values;
+    int width, height;
+    int tile_w, tile_h;
+    final int[] can_move_to = {'.', '#'};
 
     public ASCIIMap(String name, ASCIITextureInfo tex_info) {
         shader = new ShaderProgram(Gdx.files.internal("shaders/map.v.glsl"), Gdx.files.internal("shaders/map.f.glsl"));
@@ -20,6 +25,8 @@ public class ASCIIMap {
         int img_h = texture.getHeight();
         int width = tex_info.char_width();
         int height = tex_info.char_height();
+        tile_w = width;
+        tile_h = height;
 
         String map = Gdx.files.internal("maps/" + name).readString();
         String s = "";
@@ -27,6 +34,7 @@ public class ASCIIMap {
         for (map_i = 0; map_i < map.length(); ++map_i) {
             if (map.charAt(map_i) == ' ') {
                 map_w = Integer.parseInt(s);
+                s = "";
             } else if (map.charAt(map_i) == '\n') {
                 map_h = Integer.parseInt(s);
                 break;
@@ -34,6 +42,8 @@ public class ASCIIMap {
                 s += map.charAt(map_i);
             }
         }
+        this.width = map_w;
+        this.height = map_h;
 
         // Odwracamy mapę aby ją oprawnie narysować
         String lines[] = map.split("\n");
@@ -41,10 +51,11 @@ public class ASCIIMap {
         for (int i = lines.length - 1; i > 0; i--) {
             map += lines[i] + "\n";
         }
+        logic_values = new byte[this.width * this.height];
 
         // [map_h * map_w * 5 * 6] - wymiary mapy * wielkość wierzchołak * ilość wierzchołków
         float[] vert = new  float[map_h * map_w * 5 * 6];
-        int i = 0, w_pos = 0, h_pos = 0;
+        int i = 0, w_pos = 0, h_pos = 0, logic_pos = 0;
 
         for (map_i = 0; map_i < map.length(); ++map_i) {
             char c = map.charAt(map_i);
@@ -54,6 +65,15 @@ public class ASCIIMap {
                 h_pos++;
                 continue;
             }
+
+            if (IntStream.of(can_move_to).anyMatch(x -> x == (int)c)) {
+                logic_values[logic_pos] = 0;
+            }
+            else {
+                logic_values[logic_pos] = 1;
+            }
+            logic_pos++;
+
             CharMetric met = tex_info.get(c);
             float x = w_pos * width + met.offset_x;
             float y = h_pos * height + met.height + met.offset_y;
@@ -103,6 +123,13 @@ public class ASCIIMap {
                         new VertexAttribute(VertexAttributes.Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE),
                         new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
         mesh.setVertices(vert);
+        for (int j = 0, w = 0; j < logic_values.length; j++, w++) {
+            if (w == this.width) {
+                System.out.print("\n");
+                w = 0;
+            }
+            System.out.print(logic_values[j]);
+        }
     }
 
     public void render(Camera camera) {
@@ -113,4 +140,23 @@ public class ASCIIMap {
         mesh.render(shader, GL20.GL_TRIANGLES);
         shader.end();
     }
+
+    /// Sprawdza czy dane pole jest poprawne do przemieszczenia się. Zwraca fałsz gdy już coś na nim się znajduje,
+    /// lub gdy podane półżędneą nieprawidłowe.
+    public boolean is_valid(int w, int h) {
+        // Bo Java nie ma unsigned…
+        if (w < 0 || h < 0) {
+            return false;
+        }
+        if (w > width || h > height) {
+            return false;
+        }
+        if (logic_values[w + h * width] != 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public int tile_width() { return tile_w; }
+    public int tile_height() { return tile_h; }
 }
