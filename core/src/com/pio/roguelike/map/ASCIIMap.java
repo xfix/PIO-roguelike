@@ -11,12 +11,11 @@ public class ASCIIMap {
     Texture texture;
     ShaderProgram shader;
 
-    public ASCIIMap(String name) {
+    public ASCIIMap(String name, ASCIITextureInfo tex_info) {
         shader = new ShaderProgram(Gdx.files.internal("shaders/map.v.glsl"), Gdx.files.internal("shaders/map.f.glsl"));
         texture = new Texture(Gdx.files.internal("ascii/fira_mono_medium_24.png"));
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-        ASCIITextureInfo tex_info = new ASCIITextureInfo("fira_mono_medium_24");
         int img_w = texture.getWidth();
         int img_h = texture.getHeight();
         int width = tex_info.char_width();

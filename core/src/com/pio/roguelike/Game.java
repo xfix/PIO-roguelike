@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pio.roguelike.map.ASCIIMap;
+import com.pio.roguelike.map.ASCIITextureInfo;
 import com.pio.roguelike.playground.NotAnActor;
 
 public class Game extends ApplicationAdapter {
@@ -21,6 +22,7 @@ public class Game extends ApplicationAdapter {
     };
 
 	ASCIIMap map;
+    ASCIITextureInfo texture_info;
     OrthographicCamera camera;
     long prev_time, lag;
     final long UPDATE_TIME_NS = 16666666;
@@ -51,7 +53,8 @@ public class Game extends ApplicationAdapter {
 
     @Override
     public void create() {
-        map = new ASCIIMap("test");
+        texture_info = new ASCIITextureInfo("ascii/fira_mono_medium_24.sfl");
+        map = new ASCIIMap("test", texture_info);
         camera = new OrthographicCamera(800, 600);
 
         batch = new SpriteBatch();

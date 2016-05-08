@@ -12,8 +12,7 @@ public class ASCIITextureInfo {
         char_metrics = new HashMap<Character, CharMetric>();
         char znak;
         try {
-            FileReader file = new FileReader("ascii/fira_mono_medium_24.sfl");
-            //CharMetric temp = new CharMetric();
+            FileReader file = new FileReader(name);
             Scanner input = new Scanner(file);
             input.nextLine();
             input.nextLine();
@@ -32,7 +31,6 @@ public class ASCIITextureInfo {
                 temp.offset_x = input.nextInt();
                 temp.offset_y = input.nextInt();
                 char_metrics.put(znak, temp);
-               // System.out.println("znak= "+ (char)znak+" x= " + temp.pos_x + " y= " + temp.pos_y + " szer = " + temp.width + " heg= " + temp.height + " offsetx= " + temp.offset_x + " offsety= " + temp.offset_y + " char_wid= " + input.nextInt() );
                 input.nextLine();
             }
             input.close();
