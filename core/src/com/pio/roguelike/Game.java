@@ -8,7 +8,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pio.roguelike.map.ASCIIMap;
 import com.pio.roguelike.map.ASCIITextureInfo;
-import com.pio.roguelike.playground.NotAnActor;
+import com.pio.roguelike.actor.Actor;
+import com.pio.roguelike.actor.ActorSprite;
+import com.pio.roguelike.actor.Death;
+import java.util.Observable;
+import javax.swing.JOptionPane;
 
 public class Game extends ApplicationAdapter {
     private class KeyActionMapping {
@@ -26,7 +30,7 @@ public class Game extends ApplicationAdapter {
     OrthographicCamera camera;
     long prev_time, lag;
     final long UPDATE_TIME_NS = 16666666;
-    NotAnActor actor;
+    ActorSprite sprite;
     SpriteBatch batch;
 
     // Możemy powiadomić rożne obiekty, ale tylko jeden w danym czasie
@@ -58,7 +62,15 @@ public class Game extends ApplicationAdapter {
         camera = new OrthographicCamera(800, 600);
 
         batch = new SpriteBatch();
-        actor = new NotAnActor(map);
+        Actor actor = new Actor(map, "Player");
+        actor.addObserver((object, event) -> {
+            if (event instanceof Death) {
+                final String deathMessage = "Do you want your possessions identified?";
+                final String deathTitle = "You die!";
+                JOptionPane.showMessageDialog(null, deathMessage, deathTitle, JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        sprite = actor.getSprite();
         listener = actor;
 
         prev_time = System.nanoTime();
@@ -83,9 +95,8 @@ public class Game extends ApplicationAdapter {
         map.render(camera);
         batch.begin();
 
-        actor.translate(actor.velocity_x() * progress, actor.velocity_y() * progress);
-        actor.draw(batch);
-        actor.translate(-actor.velocity_x() * progress, -actor.velocity_y() * progress);
+        sprite.update();
+        sprite.draw(batch, progress);
 
         batch.end();
     }
@@ -97,6 +108,6 @@ public class Game extends ApplicationAdapter {
             }
         }
 
-        actor.update();
+        sprite.update();
     }
 }
