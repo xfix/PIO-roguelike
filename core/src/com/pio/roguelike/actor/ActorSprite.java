@@ -21,8 +21,8 @@ import java.util.Observable;
  */
 public class ActorSprite extends Observable {
 
-    int xPosition = 1;
-    int yPosition = 0;
+    int xPosition;
+    int yPosition;
     float horizontalVelocity;
     float verticalVelocity;
     int framesToComplete;
@@ -32,12 +32,19 @@ public class ActorSprite extends Observable {
     OrthographicCamera camera;
 
     public ActorSprite(ASCIIMap map) {
+        xPosition = map.start_pos_x();
+        yPosition = map.start_pos_y();
+
         Texture texture = new Texture(Gdx.files.internal("ascii/fira_mono_medium_24.png"));
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
         sprite = new Sprite(texture, 131, 156, 21, 25);
         sprite.set(sprite);
+
         this.map = map;
+
         sprite.translate(map.tile_width() * xPosition, map.tile_height() * (yPosition + 1));
+
         camera = new OrthographicCamera(800, 600);
         camera.position.set(sprite.getX() + sprite.getWidth() / 2f, sprite.getY() + sprite.getHeight() / 2f, 0);
         camera.update();

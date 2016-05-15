@@ -3,9 +3,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.esotericsoftware.yamlbeans.YamlException;
+import com.esotericsoftware.yamlbeans.YamlReader;
 
+import java.io.FileReader;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 public class ASCIIMap {
@@ -14,51 +18,50 @@ public class ASCIIMap {
     ShaderProgram shader;
     byte[] logic_values;
     int width, height;
+    int start_x, start_y;
     int tile_w, tile_h;
-    final int[] can_move_to = {'.', '#', ' '};
+    final int[] can_move_to = {'.', '#'};
 
     public ASCIIMap(String name, ASCIITextureInfo tex_info) {
-        shader = new ShaderProgram(Gdx.files.internal("shaders/map.v.glsl"), Gdx.files.internal("shaders/map.f.glsl"));
-        texture = new Texture(Gdx.files.internal("ascii/fira_mono_medium_24.png"));
-        texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        this.shader = new ShaderProgram(Gdx.files.internal("shaders/map.v.glsl"), Gdx.files.internal("shaders/map.f.glsl"));
+        this.texture = new Texture(Gdx.files.internal("ascii/fira_mono_medium_24.png"));
+        this.texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+
+        YamlReader yml_reader = new YamlReader(Gdx.files.internal("maps/" + name + ".yml").reader());
+        Map map_info;
+        try {
+            map_info = (Map)yml_reader.read();
+        } catch (YamlException e) {
+            throw new RuntimeException("Could not parse map info file!");
+        }
+        // Nawet gorzej niż w C++… a podobno Java jest wysokopoziomowym językiem (chyba że to po prostu ograniczenia tej
+        // biblioteki i w Javie da się napisać coś w stylu `int a = yaml_document["some key"];`)
+        this.width = Integer.parseInt((String)map_info.get("width"));
+        this.height = Integer.parseInt((String)map_info.get("height"));
+        this.start_x = Integer.parseInt((String)map_info.get("start x"));
+        this.start_y = Integer.parseInt((String)map_info.get("start y"));
 
         int img_w = texture.getWidth();
         int img_h = texture.getHeight();
-        int width = tex_info.char_width();
-        int height = tex_info.char_height();
-        tile_w = width;
-        tile_h = height;
+        this.tile_w = tex_info.char_width();
+        this.tile_h = tex_info.char_height();
 
         String map = Gdx.files.internal("maps/" + name).readString();
         String s = "";
-        int map_i, map_w = 0, map_h = 0;
-        for (map_i = 0; map_i < map.length(); ++map_i) {
-            if (map.charAt(map_i) == ' ') {
-                map_w = Integer.parseInt(s);
-                s = "";
-            } else if (map.charAt(map_i) == '\n') {
-                map_h = Integer.parseInt(s);
-                break;
-            } else {
-                s += map.charAt(map_i);
-            }
-        }
-        this.width = map_w;
-        this.height = map_h;
 
         // Odwracamy mapę aby ją oprawnie narysować
         String lines[] = map.split("\n");
         map = "";
-        for (int i = lines.length - 1; i > 0; i--) {
+        for (int i = lines.length - 1; i >= 0; i--) {
             map += lines[i] + "\n";
         }
-        logic_values = new byte[this.width * this.height];
+        this.logic_values = new byte[this.width * this.height];
 
         // [map_h * map_w * 5 * 6] - wymiary mapy * wielkość wierzchołak * ilość wierzchołków
-        float[] vert = new  float[map_h * map_w * 5 * 6];
+        float[] vert = new  float[this.width * this.height * 5 * 6];
         int i = 0, w_pos = 0, h_pos = 0, logic_pos = 0;
 
-        for (map_i = 0; map_i < map.length(); ++map_i) {
+        for (int map_i = 0; map_i < map.length(); ++map_i) {
             char c = map.charAt(map_i);
             // Jak ktoś zamieni Unixowe zakończenie plików na Windowsowe…
             if (c == '\n') {
@@ -76,8 +79,8 @@ public class ASCIIMap {
             logic_pos++;
 
             CharMetric met = tex_info.get(c);
-            float x = w_pos * width + met.offset_x;
-            float y = h_pos * height + met.height + met.offset_y;
+            float x = w_pos * this.tile_w + met.offset_x;
+            float y = h_pos * this.tile_h + met.height + met.offset_y;
 
             // Pierwszy trójkąt (wierchołki w polejności - pozycja(x, y, z), tekstura(u, v))
             vert[i++] = x;
@@ -120,10 +123,10 @@ public class ASCIIMap {
             w_pos++;
         }
 
-        mesh = new Mesh(true, vert.length, 0,
+        this.mesh = new Mesh(true, vert.length, 0,
                         new VertexAttribute(VertexAttributes.Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE),
                         new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
-        mesh.setVertices(vert);
+        this.mesh.setVertices(vert);
         for (int j = 0, w = 0; j < logic_values.length; j++, w++) {
             if (w == this.width) {
                 w = 0;
@@ -158,4 +161,6 @@ public class ASCIIMap {
 
     public int tile_width() { return tile_w; }
     public int tile_height() { return tile_h; }
+    public int start_pos_x() { return start_x; }
+    public int start_pos_y() { return start_y; }
 }
