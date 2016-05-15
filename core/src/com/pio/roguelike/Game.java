@@ -4,14 +4,13 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.pio.roguelike.map.ASCIIMap;
 import com.pio.roguelike.map.ASCIITextureInfo;
 import com.pio.roguelike.actor.Actor;
 import com.pio.roguelike.actor.ActorSprite;
 import com.pio.roguelike.actor.Death;
-import java.util.Observable;
+
 import javax.swing.JOptionPane;
 
 public class Game extends ApplicationAdapter {
@@ -27,7 +26,6 @@ public class Game extends ApplicationAdapter {
 
 	ASCIIMap map;
     ASCIITextureInfo texture_info;
-    OrthographicCamera camera;
     long prev_time, lag;
     final long UPDATE_TIME_NS = 16666666;
     ActorSprite sprite;
@@ -58,8 +56,7 @@ public class Game extends ApplicationAdapter {
     @Override
     public void create() {
         texture_info = new ASCIITextureInfo("ascii/fira_mono_medium_24.sfl");
-        map = new ASCIIMap("test", texture_info);
-        camera = new OrthographicCamera(800, 600);
+        map = new ASCIIMap("big", texture_info);
 
         batch = new SpriteBatch();
         Actor actor = new Actor(map, "Player");
@@ -92,13 +89,18 @@ public class Game extends ApplicationAdapter {
         float progress = (float)lag / (float)UPDATE_TIME_NS;
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        map.render(camera);
+        sprite.cameraBegin(progress);
+
+        map.render(sprite.cameraCombined());
+
+        batch.setProjectionMatrix(sprite.cameraCombined());
         batch.begin();
 
         sprite.update();
         sprite.draw(batch, progress);
 
         batch.end();
+        sprite.cameraEnd(progress);
     }
 
     void update() {

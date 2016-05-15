@@ -2,6 +2,7 @@ package com.pio.roguelike.map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix4;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -14,12 +15,12 @@ public class ASCIIMap {
     byte[] logic_values;
     int width, height;
     int tile_w, tile_h;
-    final int[] can_move_to = {'.', '#'};
+    final int[] can_move_to = {'.', '#', ' '};
 
     public ASCIIMap(String name, ASCIITextureInfo tex_info) {
         shader = new ShaderProgram(Gdx.files.internal("shaders/map.v.glsl"), Gdx.files.internal("shaders/map.f.glsl"));
         texture = new Texture(Gdx.files.internal("ascii/fira_mono_medium_24.png"));
-        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 
         int img_w = texture.getWidth();
         int img_h = texture.getHeight();
@@ -125,18 +126,16 @@ public class ASCIIMap {
         mesh.setVertices(vert);
         for (int j = 0, w = 0; j < logic_values.length; j++, w++) {
             if (w == this.width) {
-                System.out.print("\n");
                 w = 0;
             }
-            System.out.print(logic_values[j]);
         }
     }
 
-    public void render(Camera camera) {
+    public void render(Matrix4 projection) {
         texture.bind();
         shader.begin();
         shader.setUniformi("u_texture", 0);
-        shader.setUniformMatrix("u_projectionViewMatrix", camera.combined);
+        shader.setUniformMatrix("u_projectionViewMatrix", projection);
         mesh.render(shader, GL20.GL_TRIANGLES);
         shader.end();
     }

@@ -6,9 +6,11 @@
 package com.pio.roguelike.actor;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.pio.roguelike.InputAction;
 import com.pio.roguelike.map.ASCIIMap;
 import java.util.Observable;
@@ -20,20 +22,25 @@ import java.util.Observable;
 public class ActorSprite extends Observable {
 
     int xPosition = 1;
-    int yPosition;
+    int yPosition = 0;
     float horizontalVelocity;
     float verticalVelocity;
     int framesToComplete;
     ASCIIMap map;
     Sprite sprite;
+    // TODO: Po dodaniu wiekszej liczby aktorów, przenieść kamerę do klasy Player która bedzie dziedziczyła po klasie Actor
+    OrthographicCamera camera;
 
     public ActorSprite(ASCIIMap map) {
         Texture texture = new Texture(Gdx.files.internal("ascii/fira_mono_medium_24.png"));
-        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         sprite = new Sprite(texture, 131, 156, 21, 25);
         sprite.set(sprite);
         this.map = map;
-        sprite.translate(map.tile_width() + 400, map.tile_height() + 300);
+        sprite.translate(map.tile_width() * xPosition, map.tile_height() * (yPosition + 1));
+        camera = new OrthographicCamera(800, 600);
+        camera.position.set(sprite.getX() + sprite.getWidth() / 2f, sprite.getY() + sprite.getHeight() / 2f, 0);
+        camera.update();
     }
 
     public void execute(InputAction action) {
@@ -70,6 +77,7 @@ public class ActorSprite extends Observable {
     public void update() {
         if (framesToComplete > 0) {
             sprite.translate(horizontalVelocity, verticalVelocity);
+            camera.translate(horizontalVelocity, verticalVelocity);
             framesToComplete--;
         }
         if (framesToComplete == 0) {
@@ -84,5 +92,16 @@ public class ActorSprite extends Observable {
         sprite.translate(horizontalVelocity * progress, verticalVelocity * progress);
         sprite.draw(batch);
         sprite.translate(-horizontalVelocity * progress, -verticalVelocity * progress);
+    }
+
+    public Matrix4 cameraCombined() { return camera.combined; }
+
+    public void cameraBegin(float progress) {
+        camera.translate(horizontalVelocity * progress, verticalVelocity * progress);
+        camera.update();
+    }
+
+    public void cameraEnd(float progress) {
+        camera.translate(-horizontalVelocity * progress, -verticalVelocity * progress);
     }
 }
