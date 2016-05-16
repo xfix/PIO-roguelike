@@ -42,8 +42,8 @@ public class Game extends ApplicationAdapter {
 
         new KeyActionMapping(Input.Keys.K, InputAction.MOVE_UP),
         new KeyActionMapping(Input.Keys.J, InputAction.MOVE_DOWN),
-        new KeyActionMapping(Input.Keys.L, InputAction.MOVE_LEFT),
-        new KeyActionMapping(Input.Keys.H, InputAction.MOVE_RIGHT),
+        new KeyActionMapping(Input.Keys.H, InputAction.MOVE_LEFT),
+        new KeyActionMapping(Input.Keys.L, InputAction.MOVE_RIGHT),
 
         new KeyActionMapping(Input.Keys.DPAD_UP, InputAction.MOVE_UP),
         new KeyActionMapping(Input.Keys.DPAD_DOWN, InputAction.MOVE_DOWN),
