@@ -6,10 +6,8 @@ import com.badlogic.gdx.math.Matrix4;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 
-import java.io.FileReader;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class ASCIIMap {
@@ -21,6 +19,8 @@ public class ASCIIMap {
     int start_x, start_y;
     int tile_w, tile_h;
     final int[] can_move_to = {'.', '#'};
+    
+    private ArrayList<Object> traps_pos = new ArrayList<>();
 
     public ASCIIMap(String name, ASCIITextureInfo tex_info) {
         this.shader = new ShaderProgram(Gdx.files.internal("shaders/map.v.glsl"), Gdx.files.internal("shaders/map.f.glsl"));
@@ -41,6 +41,8 @@ public class ASCIIMap {
         this.start_x = Integer.parseInt((String)map_info.get("start x"));
         this.start_y = Integer.parseInt((String)map_info.get("start y"));
 
+        read_traps(map_info);
+        
         int img_w = texture.getWidth();
         int img_h = texture.getHeight();
         this.tile_w = tex_info.char_width();
@@ -163,4 +165,12 @@ public class ASCIIMap {
     public int tile_height() { return tile_h; }
     public int start_pos_x() { return start_x; }
     public int start_pos_y() { return start_y; }
+    
+    private void read_traps(Map map_info){
+        traps_pos = (ArrayList<Object>) map_info.get("traps");
+    }
+    
+    public ArrayList<Object> get_traps(){
+        return traps_pos;
+    }
 }

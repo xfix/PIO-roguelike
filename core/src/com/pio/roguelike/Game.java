@@ -14,6 +14,10 @@ import com.pio.roguelike.actor.Move;
 
 import javax.swing.JOptionPane;
 
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Game extends ApplicationAdapter {
     private class KeyActionMapping {
         int key;
@@ -66,18 +70,24 @@ public class Game extends ApplicationAdapter {
                 final String deathMessage = "Do you want your possessions identified?";
                 final String deathTitle = "You die!";
                 JOptionPane.showMessageDialog(null, deathMessage, deathTitle, JOptionPane.INFORMATION_MESSAGE);
+                System.exit(0);
             }
         });
         
         actor.addObserver((object, event) -> {
-            System.out.println("cos");
             if (event instanceof Move) {
                 Move m = (Move)event;
-                if (m.xPosition == 7 && m.yPosition == 97) {
-                    Actor a = (Actor)object;
-                    a.damage(120);
-                }
                 
+                Iterator<Object> it = map.get_traps().iterator();
+                while(it.hasNext()){
+                    HashMap trap = (HashMap) it.next();
+                    int x = Integer.parseInt((String)trap.get("x"));
+                    int y = Integer.parseInt((String)trap.get("y"));
+                    if (m.xPosition == x && m.yPosition == y) {
+                        Actor a = (Actor)object;
+                        a.damage(120);
+                    }
+                }
             }
         });
         sprite = actor.getSprite();
