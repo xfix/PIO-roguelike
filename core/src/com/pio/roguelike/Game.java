@@ -3,8 +3,11 @@ package com.pio.roguelike;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.pio.roguelike.map.ASCIIMap;
 import com.pio.roguelike.map.ASCIITextureInfo;
 import com.pio.roguelike.actor.Actor;
@@ -13,10 +16,8 @@ import com.pio.roguelike.actor.Death;
 import com.pio.roguelike.actor.Move;
 
 import javax.swing.JOptionPane;
-
-import java.util.Iterator;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Game extends ApplicationAdapter {
     private class KeyActionMapping {
@@ -35,6 +36,9 @@ public class Game extends ApplicationAdapter {
     final long UPDATE_TIME_NS = 16666666;
     ActorSprite sprite;
     SpriteBatch batch;
+    BitmapFont gdx_font;
+    UI ui;
+    final Color bg_color = new Color(0x2b303bff);
 
     // Możemy powiadomić rożne obiekty, ale tylko jeden w danym czasie
     InputListener listener;
@@ -62,6 +66,8 @@ public class Game extends ApplicationAdapter {
     public void create() {
         texture_info = new ASCIITextureInfo("ascii/fira_mono_medium_24.sfl");
         map = new ASCIIMap("big", texture_info);
+        generate_font();
+        ui = new UI(800, 600, gdx_font, bg_color);
 
         batch = new SpriteBatch();
         Actor actor = new Actor(map, "Player");
@@ -70,14 +76,13 @@ public class Game extends ApplicationAdapter {
                 final String deathMessage = "Do you want your possessions identified?";
                 final String deathTitle = "You die!";
                 JOptionPane.showMessageDialog(null, deathMessage, deathTitle, JOptionPane.INFORMATION_MESSAGE);
-                System.exit(0);
             }
         });
-        
+
         actor.addObserver((object, event) -> {
             if (event instanceof Move) {
                 Move m = (Move)event;
-                
+
                 Iterator<Object> it = map.get_traps().iterator();
                 while(it.hasNext()){
                     HashMap trap = (HashMap) it.next();
@@ -85,11 +90,14 @@ public class Game extends ApplicationAdapter {
                     int y = Integer.parseInt((String)trap.get("y"));
                     if (m.xPosition == x && m.yPosition == y) {
                         Actor a = (Actor)object;
-                        a.damage(120);
+                        a.damage(33);
                     }
                 }
+
             }
         });
+        actor.addObserver(ui);
+        actor.created();
         sprite = actor.getSprite();
         listener = actor;
 
@@ -110,7 +118,7 @@ public class Game extends ApplicationAdapter {
         }
 
         float progress = (float)lag / (float)UPDATE_TIME_NS;
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(bg_color.r, bg_color.g, bg_color.b, bg_color.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         sprite.cameraBegin(progress);
 
@@ -124,6 +132,7 @@ public class Game extends ApplicationAdapter {
 
         batch.end();
         sprite.cameraEnd(progress);
+        ui.draw();
     }
 
     void update() {
@@ -136,5 +145,10 @@ public class Game extends ApplicationAdapter {
         sprite.update();
     }
 
-
+    void generate_font() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Courier Prime.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameters = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameters.size = 13;
+        gdx_font = generator.generateFont(parameters);
+    }
 }
