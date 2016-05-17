@@ -86,12 +86,12 @@ public class ActorSprite extends Observable {
             sprite.translate(horizontalVelocity, verticalVelocity);
             camera.translate(horizontalVelocity, verticalVelocity);
             framesToComplete--;
-        }
-        if (framesToComplete == 0) {
-            horizontalVelocity = 0;
-            verticalVelocity = 0;
-            setChanged();
-            notifyObservers(new Move(xPosition, yPosition));
+            if (framesToComplete == 0) {
+                horizontalVelocity = 0;
+                verticalVelocity = 0;
+                setChanged();
+                notifyObservers(new Move(xPosition, yPosition));
+            }
         }
     }
     

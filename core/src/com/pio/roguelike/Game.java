@@ -10,6 +10,7 @@ import com.pio.roguelike.map.ASCIITextureInfo;
 import com.pio.roguelike.actor.Actor;
 import com.pio.roguelike.actor.ActorSprite;
 import com.pio.roguelike.actor.Death;
+import com.pio.roguelike.actor.Move;
 
 import javax.swing.JOptionPane;
 
@@ -65,6 +66,18 @@ public class Game extends ApplicationAdapter {
                 final String deathMessage = "Do you want your possessions identified?";
                 final String deathTitle = "You die!";
                 JOptionPane.showMessageDialog(null, deathMessage, deathTitle, JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        
+        actor.addObserver((object, event) -> {
+            System.out.println("cos");
+            if (event instanceof Move) {
+                Move m = (Move)event;
+                if (m.xPosition == 7 && m.yPosition == 97) {
+                    Actor a = (Actor)object;
+                    a.damage(120);
+                }
+                
             }
         });
         sprite = actor.getSprite();

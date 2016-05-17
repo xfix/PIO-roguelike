@@ -19,7 +19,10 @@ public class Actor extends Observable implements InputListener {
     
     public Actor(ASCIIMap map, String name) {
         sprite = new ActorSprite(map);
-        sprite.addObserver((actorSprite, event) -> notifyObservers(event));
+        sprite.addObserver((actorSprite, event) -> {
+            setChanged();
+            notifyObservers(event);
+        });
         this.name = name;
     }
 
