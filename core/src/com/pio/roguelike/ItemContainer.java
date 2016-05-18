@@ -29,15 +29,27 @@ public class ItemContainer {
     }
     
     void showItems(){
+        float width= 80f;
+        float height = 80f;
+        
+        float start_w = 20f;
+        float start_h = 20f;
+        Color text_normal = new Color(0xebcb8bff);
+        Color green = new Color(0xa3be8cff);
+        
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+        shape.setColor(green);
+        shape.rect(start_w, start_h, width, height);
+        shape.end();
+        
         for ( int i=0; i<itemList.size(); i++ ){
-            /*
-            System.out.println( itemList.get(i).name );
-            System.out.println( itemList.get(i).price);
-            System.out.println( itemList.get(i).kind );
-            System.out.println( itemList.get(i).dmg_min );
-            System.out.println( itemList.get(i).dmg_max);
-            System.out.println( itemList.get(i).speed );
-            */
+            Batch batch = new SpriteBatch();
+            batch.begin();
+            font.setColor(text_normal);
+            font.draw(batch, "Name: " + itemList.get(i).name, start_w + 1f, start_h + 1f);
+            font.draw(batch, "Price: " + itemList.get(i).price, start_w + 1f, start_h + 11f);
+            font.draw(batch, "ID: " + itemList.get(i).id, start_w + 1f, start_h + 21f);
+            batch.end();
         }
     }
 }
