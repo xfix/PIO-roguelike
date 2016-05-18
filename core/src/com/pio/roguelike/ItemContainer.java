@@ -1,10 +1,10 @@
-package com.pio.roguelike.itemContainer;
+package com.pio.roguelike.ItemContainer;
 
 import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 
-public class itemContainer {
+public class ItemContainer {
     ArrayList itemList;
     int quantity;
     FreeTypeFontGenerator generator;
@@ -13,21 +13,19 @@ public class itemContainer {
     
     itemContainer() {
         itemList = new ArrayList();
-        quantity = 0;
-        generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/myfont.ttf"));
-        parameter = new FreeTypeFontParameter();
-        font = generator.generateFont(parameter);
-        generator.dispose();
+    }
+    
+    itemContainer(BitMapFont font) {
+        itemList = new ArrayList();
+        this.font = font;
     }
     
     void addItem(Item item){
         itemList.add(item);
-        quantity++;
     }
     
     void removeItem(Item item){
         itemList.remove(item);
-        quantity--;
     }
     
     void showItems(){
@@ -42,6 +40,4 @@ public class itemContainer {
             */
         }
     }
-    
-    
 }
