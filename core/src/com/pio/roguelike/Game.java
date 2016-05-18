@@ -28,7 +28,7 @@ public class Game extends ApplicationAdapter {
             this.key = key;
             this.action = action;
         }
-    };
+    }
 
 	ASCIIMap map;
     ASCIITextureInfo texture_info;
@@ -66,38 +66,13 @@ public class Game extends ApplicationAdapter {
     public void create() {
         texture_info = new ASCIITextureInfo("ascii/fira_mono_medium_24.sfl");
         map = new ASCIIMap("big", texture_info);
-        generate_font();
+        generateFont();
         ui = new UI(800, 600, gdx_font, bg_color);
 
         batch = new SpriteBatch();
         Actor actor = new Actor(map, "Player");
-        actor.addObserver((object, event) -> {
-            if (event instanceof Death) {
-                final String deathMessage = "Do you want your possessions identified?";
-                final String deathTitle = "You die!";
-                JOptionPane.showMessageDialog(null, deathMessage, deathTitle, JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
+        addObservers(actor);
 
-        actor.addObserver((object, event) -> {
-            if (event instanceof Move) {
-                Move m = (Move)event;
-
-                Iterator<Object> it = map.get_traps().iterator();
-                while(it.hasNext()){
-                    HashMap trap = (HashMap) it.next();
-                    int x = Integer.parseInt((String)trap.get("x"));
-                    int y = Integer.parseInt((String)trap.get("y"));
-                    if (m.xPosition == x && m.yPosition == y) {
-                        Actor a = (Actor)object;
-                        a.damage(33);
-                    }
-                }
-
-            }
-        });
-        actor.addObserver(ui);
-        actor.created();
         sprite = actor.getSprite();
         listener = actor;
 
@@ -145,10 +120,39 @@ public class Game extends ApplicationAdapter {
         sprite.update();
     }
 
-    void generate_font() {
+    void generateFont() {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Courier Prime.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameters = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameters.size = 13;
         gdx_font = generator.generateFont(parameters);
+    }
+
+    void addObservers(Actor actor) {
+        actor.addObserver((object, event) -> {
+            if (event instanceof Death) {
+                final String deathMessage = "Do you want your possessions identified?";
+                final String deathTitle = "You die!";
+                JOptionPane.showMessageDialog(null, deathMessage, deathTitle, JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        actor.addObserver((object, event) -> {
+            if (event instanceof Move) {
+                Move m = (Move)event;
+
+                Iterator<Object> it = map.get_traps().iterator();
+                while(it.hasNext()) {
+                    HashMap trap = (HashMap) it.next();
+                    int x = Integer.parseInt((String)trap.get("x"));
+                    int y = Integer.parseInt((String)trap.get("y"));
+                    if (m.xPosition == x && m.yPosition == y) {
+                        Actor a = (Actor)object;
+                        a.damage(33);
+                    }
+                }
+            }
+        });
+        actor.addObserver(ui);
+        actor.created();
     }
 }

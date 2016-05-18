@@ -49,7 +49,6 @@ public class ASCIIMap {
         this.tile_h = tex_info.char_height();
 
         String map = Gdx.files.internal("maps/" + name).readString();
-        String s = "";
 
         // Odwracamy mapę aby ją oprawnie narysować
         String lines[] = map.split("\n");
