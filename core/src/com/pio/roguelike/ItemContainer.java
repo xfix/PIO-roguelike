@@ -45,7 +45,6 @@ public class ItemContainer {
         for (Item item : itemList) {
             Batch batch = new SpriteBatch();
             batch.begin();
-            font.setColor(text_color);
             String item_type = new String();
             if (item instanceof Weapon) {
                 item_type = "W";
@@ -56,7 +55,9 @@ public class ItemContainer {
             else {
                 item_type = "?";
             }
+            font.setColor(text_color_sp);
             font.draw(batch, item_type, start_w + 10f, start_h + height - yoffset);
+            font.setColor(text_color);
             font.draw(batch, item.name, start_w + 40f, start_h + height - yoffset);
             yoffset += 5f + font.getLineHeight();
             batch.end();
