@@ -1,21 +1,24 @@
-package com.pio.roguelike.ItemContainer;
+package com.pio.roguelike;
 
 import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.pio.roguelike.Item;
 
 public class ItemContainer {
-    ArrayList itemList;
-    int quantity;
-    FreeTypeFontGenerator generator;
-    FreeTypeFontParameter parameter;
+    ArrayList<Item> itemList;
     BitmapFont font;
     
-    itemContainer() {
+    public ItemContainer() {
         itemList = new ArrayList();
     }
     
-    itemContainer(BitMapFont font) {
+    public void itemContainer(BitmapFont font) {
         itemList = new ArrayList();
         this.font = font;
     }
@@ -36,7 +39,8 @@ public class ItemContainer {
         float start_h = 20f;
         Color text_normal = new Color(0xebcb8bff);
         Color green = new Color(0xa3be8cff);
-        
+
+        ShapeRenderer shape = new ShapeRenderer();
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.setColor(green);
         shape.rect(start_w, start_h, width, height);
