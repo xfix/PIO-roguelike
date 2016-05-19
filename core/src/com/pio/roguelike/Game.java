@@ -70,7 +70,7 @@ public class Game extends ApplicationAdapter {
         ui = new UI(800, 600, gdx_font, bg_color);
 
         batch = new SpriteBatch();
-        Actor actor = new Actor(map, "Player");
+        Actor actor = new Actor(map, "Player", gdx_font);
         addObservers(actor);
 
         sprite = actor.getSprite();

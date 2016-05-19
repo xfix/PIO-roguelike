@@ -1,8 +1,10 @@
 package com.pio.roguelike.actor;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.pio.roguelike.InputAction;
 import com.pio.roguelike.InputListener;
 import com.pio.roguelike.Item;
+import com.pio.roguelike.ItemContainer;
 import com.pio.roguelike.map.ASCIIMap;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -15,9 +17,10 @@ public class Actor extends Observable implements InputListener {
     private int strength = 10;
     private int agility = 10;
     // Use ItemContainer class when implemented
-    private final ArrayList<Item> items = new ArrayList<>();
+    private final ItemContainer items;
     
-    public Actor(ASCIIMap map, String name) {
+    public Actor(ASCIIMap map, String name, BitmapFont font) {
+        items = new ItemContainer(font);
         sprite = new ActorSprite(map);
         sprite.addObserver((actorSprite, event) -> {
             setChanged();
@@ -46,10 +49,12 @@ public class Actor extends Observable implements InputListener {
     }
     
     public void addItem(Item item) {
-        items.add(item);
+        items.addItem(item);
         setChanged();
         notifyObservers(new ItemObtained(item));
     }
+
+    public ItemContainer itemContainer() { return items; }
 
     /// Notify all observers that actor was created
     public void created() {
