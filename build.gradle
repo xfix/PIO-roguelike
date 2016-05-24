@@ -48,7 +48,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile "com.esotericsoftware.yamlbeans:yamlbeans:1.09"
-        testCompile 'junit:junit:4.12'
+        compile 'junit:junit:4.12'
     }
 }
 

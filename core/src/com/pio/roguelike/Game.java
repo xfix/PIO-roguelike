@@ -30,7 +30,7 @@ public class Game extends ApplicationAdapter {
         }
     }
 
-	ASCIIMap map;
+    ASCIIMap map;
     ASCIITextureInfo texture_info;
     long prev_time, lag;
     final long UPDATE_TIME_NS = 16666666;

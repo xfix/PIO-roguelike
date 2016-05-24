@@ -46,7 +46,7 @@ local.properties
 *.launch
 
 ## NetBeans
-**/nbproject/private/
+**/nbproject/
 build/
 nbbuild/
 dist/
@@ -59,7 +59,10 @@ nb-configuration.xml
 .gradle
 gradle-app.setting
 build/
+.nb-gradle-properties
 
 ## OS Specific
 .DS_Store
 /.nb-gradle/
+
+*~
