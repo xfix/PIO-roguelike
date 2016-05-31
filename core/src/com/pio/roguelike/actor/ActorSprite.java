@@ -32,6 +32,9 @@ public class ActorSprite extends Observable {
     OrthographicCamera camera;
 
     public ActorSprite(ASCIIMap map) {
+        if (map == null) {
+            return;
+        }
         xPosition = map.start_pos_x();
         yPosition = map.start_pos_y();
 
